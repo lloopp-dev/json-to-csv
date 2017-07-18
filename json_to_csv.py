@@ -37,25 +37,26 @@ def to_string(s):
 #   "node_item_5_sub_item_2_0":"sub_item_value_13"
 # }
 ##
-def reduce_item(key, value):
-    global reduced_item
+def reduce_item(key, value, reduced_item={}):
     
     #Reduction Condition 1
     if type(value) is list:
         i=0
         for sub_item in value:
-            reduce_item(key+'_'+to_string(i), sub_item)
+            reduce_item(key+'_'+to_string(i), sub_item, reduced_item=reduced_item)
             i=i+1
 
     #Reduction Condition 2
     elif type(value) is dict:
         sub_keys = value.keys()
         for sub_key in sub_keys:
-            reduce_item(key+'_'+to_string(sub_key), value[sub_key])
+            reduce_item(key+'_'+to_string(sub_key), value[sub_key], reduced_item=reduced_item)
     
     #Base Condition
     else:
         reduced_item[to_string(key)] = to_string(value)
+        
+    return reduced_item
 
 
 if __name__ == "__main__":
@@ -79,8 +80,7 @@ if __name__ == "__main__":
         processed_data = []
         header = []
         for item in data_to_be_processed:
-            reduced_item = {}
-            reduce_item(node, item)
+            reduced_item = reduce_item(node, item)
 
             header += reduced_item.keys()
 
